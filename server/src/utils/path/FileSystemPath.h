@@ -169,6 +169,7 @@ namespace fs {
         friend void last_write_time(const path& p,
                                     file_time_type new_time);
         friend std::filesystem::file_time_type last_write_time(const path& p);
+        friend std::filesystem::file_status status(const path& p);
         friend std::size_t hash_value( const path& p ) noexcept;
 
         template< class CharT, class Traits >
@@ -227,6 +228,10 @@ namespace fs {
 
     inline std::filesystem::file_time_type last_write_time(const path& p) {
         return last_write_time(p.path_);
+    }
+
+    inline std::filesystem::file_status status(const path& p) {
+        return status(p.path_);
     }
 
     inline bool operator<( const path& lhs, const path& rhs ) noexcept {

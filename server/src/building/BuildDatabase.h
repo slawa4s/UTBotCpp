@@ -40,16 +40,33 @@ public:
         bool allAreCorrect = false;
     };
 
+    struct BaseFileInfo {
+        BaseFileInfo() = default;
+        virtual ~BaseFileInfo() = default;
+
+        // Libraries that current command depends on, but those are already installed and not built
+        // within project
+        tsl::ordered_set<fs::path, HashUtils::PathHash> installedFiles;
+
+        virtual void addFile(fs::path file) = 0;
+    };
+
     /*
      * struct ObjectFileInfo represents a compile command from compile_commands.json
      * that produces an object file
      */
-    struct ObjectFileInfo {
-        utbot::CompileCommand command; // Compilation command
+    struct ObjectFileInfo : BaseFileInfo {
+        // Compilation command
+        utbot::CompileCommand command;
 
-        tsl::ordered_set<fs::path, HashUtils::PathHash> files; // Object files and libraries that current command depends on
-        fs::path linkUnit;                            // Example of executable or a library which contains current objectFile
-        std::shared_ptr<KleeFilesInfo> kleeFilesInfo; // Information about klee files
+        // Object files and libraries that current command depends on
+        tsl::ordered_set<fs::path, HashUtils::PathHash> files;
+
+        // Example of executable or a library which contains current objectFile
+        fs::path linkUnit;
+
+        // Information about klee files
+        std::shared_ptr<KleeFilesInfo> kleeFilesInfo;
 
         // Directory from where to execute the command
         [[nodiscard]] fs::path const &getDirectory() const;
@@ -69,15 +86,15 @@ public:
     * OR
     * a compile command from compile_commands.json that produces an executable
     */
-    struct TargetInfo {
-        //Linkage command
+    struct TargetInfo : BaseFileInfo {
+        // Linkage command
         std::vector<utbot::LinkCommand> commands;
 
         // Source files, object files and libraries that current command depends on
         tsl::ordered_set<fs::path, HashUtils::PathHash> files;
 
         // Units which contains current library
-        std::vector <fs::path> parentLinkUnits;
+        std::vector<fs::path> parentLinkUnits;
 
         void addFile(fs::path file);
 
@@ -215,9 +232,8 @@ private:
 
     using sharedLibrariesMap = std::unordered_map<std::string, CollectionUtils::MapFileTo<fs::path>>;
 
-    template <typename Info>
-    void addLibrariesForCommand(utbot::BaseCommand *command,
-                                const std::shared_ptr<Info> &info,
+    void addLibrariesForCommand(utbot::BaseCommand &command,
+                                BaseFileInfo &info,
                                 sharedLibrariesMap &sharedLibraryFiles,
                                 bool objectFiles = false);
 };

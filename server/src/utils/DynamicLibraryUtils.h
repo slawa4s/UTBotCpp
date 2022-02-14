@@ -24,6 +24,8 @@ namespace DynamicLibraryUtils {
 
     std::optional<fs::path> getLibraryAbsolutePath(std::string const &argument,
                                                    fs::path const &directory);
+
+    bool isInstalledLibrary(fs::path const &file);
 };
 
 

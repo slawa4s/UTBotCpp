@@ -23,4 +23,9 @@ namespace DynamicLibraryUtils {
         }
         return std::nullopt;
     }
+
+    bool isInstalledLibrary(const fs::path &file) {
+        // The file's user group doesn't have write permission, assume it's installed library
+        return (fs::status(file).permissions() & fs::perms::group_write) == fs::perms::none;
+    }
 };
