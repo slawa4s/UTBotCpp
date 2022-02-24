@@ -37,6 +37,9 @@ void CLIUtils::setupLogger(const std::string &logPath,
         loguru::g_preamble_thread = false;
     }
     setOptPath(logPath, Paths::logPath);
+    if (!logPath.empty()) {
+        loguru::add_file(logPath.data(), loguru::Append, loguru::Verbosity_MAX);
+    }
     setStderrVerbosity(verbosity);
 }
 
