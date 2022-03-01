@@ -56,7 +56,7 @@ jobs:
           ./vscode-plugin/src/test/run.sh
         shell: bash
       - uses: actions/upload-artifact@v2
-          if: failure()
-          with:
-            name: UTBot unit tests logs
-            path: server/build/logs
+        if: failure()
+        with:
+          name: UTBot unit tests logs
+          path: server/build/logs
