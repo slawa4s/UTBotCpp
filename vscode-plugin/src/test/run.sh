@@ -5,7 +5,7 @@
 #for fail-fast execution mode
 set -e
 #Path variables
-HOME_DIR=/home/utbot/UTBotCpp
+HOME_DIR=./
 VSCODE_VERSION_DIR=$(ls -d -1 $HOME_DIR/vscode-plugin/.vscode-test/vscode-*/ |sed -n '1p')
 echo "VSCODE_VERSION_DIR=$VSCODE_VERSION_DIR"
 
