@@ -9,6 +9,7 @@
 #include "commands/Commands.h"
 
 #include "loguru.h"
+#include "ctime"
 
 
 using namespace GenerationUtils;
@@ -28,6 +29,16 @@ void setStderrVerbosity(loguru::NamedVerbosity verbosity) {
     loguru::g_stderr_verbosity = verbosity;
 }
 
+std::string getCurrentTime() {
+    time_t rawtime;
+    struct tm* timeinfo;
+    char buffer[80];
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(buffer,sizeof(buffer),"%Y%m%d%H%M%S",timeinfo);
+    return std::string(buffer);
+}
+
 void CLIUtils::setupLogger(const std::string &logPath,
                            const loguru::NamedVerbosity &verbosity,
                            bool threadView) {
@@ -37,9 +48,11 @@ void CLIUtils::setupLogger(const std::string &logPath,
         loguru::g_preamble_thread = false;
     }
     setOptPath(logPath, Paths::logPath);
-    if (!logPath.empty()) {
-        loguru::add_file(logPath.data(), loguru::Append, loguru::Verbosity_MAX);
-    }
+
+    const auto filename = "utbot-" + getCurrentTime() + ".log";
+    const auto UTBOT_STDOUT_LOG_FILE = Paths::logPath / "logs" / filename;
+    const auto logfile_path_string = std::string(UTBOT_STDOUT_LOG_FILE);
+    loguru::add_file(logfile_path_string.data(), loguru::Append, loguru::Verbosity_MAX);
     setStderrVerbosity(verbosity);
 }
 
