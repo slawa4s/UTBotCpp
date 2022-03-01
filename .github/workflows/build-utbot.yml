@@ -46,12 +46,17 @@ jobs:
           chmod +x docker/action-scripts/build-and-unit-tests.sh
           ./docker/action-scripts/build-and-unit-tests.sh
         shell: bash
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: UTBot unit tests logs
-          path: server/build/logs
       - name: build VSCode plugin
         run: |
           chmod +x docker/action-scripts/build-vsix.sh
           ./docker/action-scripts/build-vsix.sh
+      - name: run VSCode tests
+        run: |
+          chmod +x vscode-plugin/src/test/run.sh
+          ./vscode-plugin/src/test/run.sh
+        shell: bash
+      - uses: actions/upload-artifact@v2
+          if: failure()
+          with:
+            name: UTBot unit tests logs
+            path: server/build/logs
