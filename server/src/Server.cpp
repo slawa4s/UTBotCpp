@@ -272,8 +272,9 @@ Status Server::TestsGenServiceImpl::ProcessBaseTestRequest(BaseTestGen &testGen,
         auto testMethods = linker.getTestMethods();
         KleeRunner kleeRunner{ testGen.projectContext, testGen.settingsContext,
                                testGen.serverBuildDir };
+        bool interactiveMode = (dynamic_cast<FileTestGen *>(&testGen) != nullptr);
         kleeRunner.runKlee(testMethods, testGen.tests, generator, testGen.methodNameToReturnTypeMap,
-                           lineInfo, testsWriter, testGen.isBatched());
+                           lineInfo, testsWriter, testGen.isBatched(), interactiveMode);
     } catch (const ExecutionProcessException &e) {
         string command = e.what();
         return Status(StatusCode::FAILED_PRECONDITION,
