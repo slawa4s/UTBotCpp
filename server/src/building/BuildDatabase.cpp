@@ -555,6 +555,16 @@ void BuildDatabase::ObjectFileInfo::addFile(fs::path file) {
 }
 
 void BuildDatabase::TargetInfo::addFile(fs::path file) {
+    LOG_S(INFO) << "Permissions for file '" << file << "' : "
+                << ((fs::status(file).permissions() & fs::perms::owner_read) != fs::perms::none ? "r" : "-")
+                << ((fs::status(file).permissions() & fs::perms::owner_write) != fs::perms::none ? "w" : "-")
+                << ((fs::status(file).permissions() & fs::perms::owner_exec) != fs::perms::none ? "x" : "-")
+                << ((fs::status(file).permissions() & fs::perms::group_read) != fs::perms::none ? "r" : "-")
+                << ((fs::status(file).permissions() & fs::perms::group_write) != fs::perms::none ? "w" : "-")
+                << ((fs::status(file).permissions() & fs::perms::group_exec) != fs::perms::none ? "x" : "-")
+                << ((fs::status(file).permissions() & fs::perms::others_read) != fs::perms::none ? "r" : "-")
+                << ((fs::status(file).permissions() & fs::perms::others_write) != fs::perms::none ? "w" : "-")
+                << ((fs::status(file).permissions() & fs::perms::others_exec) != fs::perms::none ? "x" : "-");
     if (!DynamicLibraryUtils::isInstalledLibrary(file)) {
         files.insert(std::move(file));
     }
