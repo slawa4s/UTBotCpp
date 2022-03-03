@@ -58,8 +58,7 @@ jobs:
       - name: Run tests
         uses: GabrielBB/xvfb-action@v1.0
         with:
-          run: npm test
-          options: ./integration-tests/c-example --extensionDevelopmentPath=./vscode-plugin --extensionTestsPath=./vscode-plugin/out/test/suite/index
+          run: npm test ./integration-tests/c-example --extensionDevelopmentPath=./vscode-plugin --extensionTestsPath=./vscode-plugin/out/test/suite/index
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
