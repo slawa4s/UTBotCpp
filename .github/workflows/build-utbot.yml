@@ -50,11 +50,6 @@ jobs:
         run: |
           chmod +x docker/action-scripts/build-vsix.sh
           ./docker/action-scripts/build-vsix.sh
-      - name: run VSCode tests
-        run: |
-          chmod +x vscode-plugin/src/test/run.sh
-          ./vscode-plugin/src/test/run.sh
-        shell: bash
       - uses: actions/upload-artifact@v2
         if: failure()
         with:

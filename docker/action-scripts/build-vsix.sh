@@ -15,3 +15,5 @@ npm rebuild grpc --runtime=electron --target=7.3.0
 chmod +x protoc.sh && ./protoc.sh $utbot_dir/server/proto $utbot_dir/vscode-plugin/src/proto-ts
 npm run compile
 vsce package --no-yarn
+
+xvfb-run -a npm test
