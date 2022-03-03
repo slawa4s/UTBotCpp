@@ -54,7 +54,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 15.x
-        run: npm install
+      - run: npm install
       - name: Run tests
         uses: GabrielBB/xvfb-action@v1.0
         with:
