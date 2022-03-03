@@ -50,6 +50,13 @@ jobs:
         run: |
           chmod +x docker/action-scripts/build-vsix.sh
           ./docker/action-scripts/build-vsix.sh
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15.x
+      - run: npm install
+      - run: sudo apt-get install xvfb
+      - run: xvfb-run -a npm test
       - uses: actions/upload-artifact@v2
         if: failure()
         with:

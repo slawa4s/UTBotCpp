@@ -16,4 +16,3 @@ chmod +x protoc.sh && ./protoc.sh $utbot_dir/server/proto $utbot_dir/vscode-plug
 npm run compile
 vsce package --no-yarn
 
-xvfb-run -a npm test
