@@ -28,7 +28,7 @@ export class ProjectConfig {
         this.cmakeOptions = Prefs.getCmakeOptions();
     }
 
-    public async configure(): Promise<boolean> {
+    public async configure(configMode: ConfigMode): Promise<boolean> {
         logger.debug('Configure project');
 
         if (this.client.isConnectionNotEstablished() || this.client.newClient) {
@@ -39,7 +39,7 @@ export class ProjectConfig {
             }
         }
 
-        const response = await this.checkProjectConfiguration(ConfigMode.CHECK);
+        const response = await this.checkProjectConfiguration(configMode);
         logger.debug(`Received response: ${response}`);
         switch (response.getType()) {
             case ProjectConfigStatus.IS_OK: {
@@ -103,7 +103,7 @@ export class ProjectConfig {
                 const message = 'Build folder is created successfully';
                 logger.info(message);
                 messages.showInfoMessage(`${message}. Now continuing project configure.`);
-                return this.configure();
+                return this.configure(ConfigMode.CHECK);
             }
             case ProjectConfigStatus.BUILD_DIR_CREATION_FAILED: {
                 const message = `Build folder creation failed with the following message: "${response.getMessage()}"`;

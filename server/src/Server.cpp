@@ -620,10 +620,18 @@ Server::TestsGenServiceImpl::ConfigureProject(ServerContext *context,
         return UserProjectConfiguration::RunProjectConfigurationCommands(
                 buildDirPath, projectContext.projectname(), cmakeOptions, writer);
     }
+    case ConfigMode::ALL: {
+        fs::remove_all(Paths::getTmpDir(""));
+        fs::remove_all(buildDirPath);
+        UserProjectConfiguration::RunBuildDirectoryCreation(buildDirPath, writer);
+        std::vector<string> cmakeOptions(request->cmakeoptions().begin(), request->cmakeoptions().end());
+        return UserProjectConfiguration::RunProjectConfigurationCommands( buildDirPath, projectContext.projectname(), cmakeOptions, writer);
+    }
     default:
-        return Status(StatusCode::CANCELLED, "Invalid request type.");
+        return {StatusCode::CANCELLED, "Invalid request type."};
     }
 }
+
 Status Server::TestsGenServiceImpl::GetProjectTargets(ServerContext *context,
                                                       const ProjectTargetsRequest *request,
                                                       ProjectTargetsResponse *response) {
