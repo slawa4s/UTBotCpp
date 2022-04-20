@@ -17,7 +17,8 @@ namespace sarif {
             json sarif_json;
         public:
             Sarif();
-            void writeSarifFile(const fs::path &jsonPath);
+            std::size_t loadRuns(const fs::path &jsonPath);
+            void writeSarifFile(const fs::path &runsPath);
     };
 }
 

@@ -46,7 +46,7 @@ get_filename_component(UTBOT_DIR ${PROJECT_SOURCE_DIR} DIRECTORY)
 set(SUBMODULES_DIR "${UTBOT_DIR}/submodules")
 set(LOGGER_DIR "${SUBMODULES_DIR}/loguru")
 set(LOGGER_AUX_DIR "${PROJECT_SOURCE_DIR}/logger-aux")
-add_library(loguru ${LOGGER_DIR}/loguru.cpp ${LOGGER_AUX_DIR}/loguru_debug.cpp)
+add_library(loguru ${LOGGER_DIR}/loguru.cpp ${LOGGER_AUX_DIR}/loguru_debug.cpp src/sarif/SarifTestResult.h src/sarif/SarifTestResult.cpp)
 target_include_directories(loguru PUBLIC ${LOGGER_DIR})
 include_directories(${LOGGER_AUX_DIR})
 
