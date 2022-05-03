@@ -12,6 +12,7 @@
 #include "utils/FileSystemUtils.h"
 #include "utils/KleeUtils.h"
 #include "utils/LogUtils.h"
+#include "sarif/Sarif.h"
 #include "TimeExecStatistics.h"
 
 #include "loguru.h"
@@ -42,6 +43,7 @@ void KleeRunner::runKlee(const std::vector<tests::TestMethod> &testMethods,
         FileSystemUtils::removeAll(kleeOutDir);
     }
     fs::create_directories(kleeOutDir);
+    sarif::Sarif sarif = sarif::Sarif();
     CollectionUtils::MapFileTo<std::vector<TestMethod>> fileToMethods;
     for (const auto &method : testMethods) {
         fileToMethods[method.sourceFilePath].push_back(method);
@@ -88,6 +90,8 @@ void KleeRunner::runKlee(const std::vector<tests::TestMethod> &testMethods,
 
     testsWriter->writeTestsWithProgress(testsMap, "Running klee", projectContext.testDirPath,
                                         std::move(writeFunctor));
+    LOG_S(INFO) << "Get " << sarif.loadRuns(kleeOutDir) << " error suite to Sarif";
+    sarif.writeSarifFile(kleeOutDir);
 }
 
 fs::path KleeRunner::getKleeMethodOutFile(const TestMethod &method) {
