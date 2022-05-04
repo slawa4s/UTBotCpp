@@ -6,15 +6,18 @@
 
 namespace sarif {
     Sarif::Sarif() {
-        sarif_json["version"] = default_version;
-        sarif_json["$schema"] = default_sheme;
-        sarif_json["runs"]["tool"]["driver"]["name"] = default_tool_name;
-        sarif_json["runs"]["results"] = json::array();
+        sarifJson["version"] = defaultVersion;
+        sarifJson["$schema"] = defaultScheme;
+        sarifJson["runs"] = json::array();
+        sarifJson["runs"][0]["tool"]["driver"]["name"] = defaultToolName;
+        sarifJson["runs"][0]["tool"]["driver"]["rules"] = json::array();
+        sarifJson["runs"][0]["results"] = json::array();
     }
 
     void Sarif::writeSarifFile(const fs::path &jsonPath) {
-        LOG_S(INFO) << "Load Sarif to " << jsonPath.string() + "/sarifOutput.sarif";
-        JsonUtils::writeJsonToFile(jsonPath.string() + "/sarifOutput.sarif", sarif_json);
+        fs::path finalPath = jsonPath.string() + "/" + sarifName;
+        LOG_S(INFO) << "Load Sarif to " << finalPath.string();
+        JsonUtils::writeJsonToFile(finalPath, sarifJson);
     }
 
     std::size_t Sarif::loadRuns(const fs::path &runsFolder) {
@@ -28,7 +31,7 @@ namespace sarif {
             if (file.string().rfind("__sarif") != std::string::npos) {
                 countErrorRuns += 1;
                 json sarifRunFromFile = JsonUtils::getJsonFromFile(file);
-                sarif_json["runs"]["results"].push_back(sarifRunFromFile);
+                sarifJson["runs"][0]["results"].push_back(sarifRunFromFile);
             }
         }
         return countErrorRuns;

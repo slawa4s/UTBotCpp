@@ -91,7 +91,7 @@ void KleeRunner::runKlee(const std::vector<tests::TestMethod> &testMethods,
     testsWriter->writeTestsWithProgress(testsMap, "Running klee", projectContext.testDirPath,
                                         std::move(writeFunctor));
     LOG_S(INFO) << "Get " << sarif.loadRuns(kleeOutDir) << " error suite to Sarif";
-    sarif.writeSarifFile(kleeOutDir);
+    sarif.writeSarifFile(projectContext.projectPath);
 }
 
 fs::path KleeRunner::getKleeMethodOutFile(const TestMethod &method) {
