@@ -5,6 +5,7 @@
 #include "KleeRunner.h"
 
 #include "Paths.h"
+#include "sarif/Sarif.h"
 #include "exceptions/FileNotPresentedInArtifactException.h"
 #include "exceptions/FileNotPresentedInCommandsException.h"
 #include "tasks/RunKleeTask.h"
@@ -12,6 +13,7 @@
 #include "utils/FileSystemUtils.h"
 #include "utils/KleeUtils.h"
 #include "utils/LogUtils.h"
+#include "sarif/Sarif.h"
 
 #include "loguru.h"
 
@@ -43,6 +45,7 @@ void KleeRunner::runKlee(const std::vector<tests::TestMethod> &testMethods,
         FileSystemUtils::removeAll(kleeOutDir);
     }
     fs::create_directories(kleeOutDir);
+    sarif::Sarif sarif = sarif::Sarif();
     CollectionUtils::MapFileTo<std::vector<TestMethod>> fileToMethods;
     for (const auto &method : testMethods) {
         fileToMethods[method.sourceFilePath].push_back(method);
@@ -89,6 +92,8 @@ void KleeRunner::runKlee(const std::vector<tests::TestMethod> &testMethods,
 
     testsWriter->writeTestsWithProgress(testsMap, "Running klee", projectContext.testDirPath,
                                         std::move(writeFunctor));
+    LOG_S(INFO) << "Get " << sarif.loadRuns(kleeOutDir, projectContext.projectPath) << " error suite to Sarif";
+    sarif.writeSarifFile(projectContext.projectPath);
 }
 
 fs::path KleeRunner::getKleeMethodOutFile(const TestMethod &method) {
@@ -186,8 +191,14 @@ void KleeRunner::processBatch(MethodKtests &ktestChunk,
                             kTestObjects, [](const ConcretizedObject &kTestObject) {
                                 return UTBotKTestObject{kTestObject};
                             });
-
-                    ktestChunk[testMethod].emplace_back(objects, status);
+                    fs::path tmp = path.filename();
+                    if (status == tests::UTBotKTest::Status::FAILED) {
+                        fs::path sarifOutput = path.parent_path() / fs::path(sarif::Sarif::sarif_klee_prefix +
+                                path.filename_without_extension() + sarif::Sarif::sarif_klee_extension);
+                        ktestChunk[testMethod].emplace_back(objects, status, sarifOutput);
+                    } else {
+                        ktestChunk[testMethod].emplace_back(objects, status);
+                    }
                 }
             }
         }
